@@ -6,6 +6,7 @@ var script = document.createElement('script'),
     videoSize = 1,
     photoSize = 1,
     siteURL = "http://solacingsavant.tumblr.com/",
+    addedSection,
     domain = getDomain(siteURL);
 
 script.src = 'http://api.tumblr.com/v2/blog/' + domain + '/posts?api_key=Srhk9qkcJO69pAoB4ltM5uIqpwUBO7kgDqDEaCD9Jo8EafWyHE&limit=' + limit + '&offset=' + offset + '&callback=filter';
@@ -18,7 +19,9 @@ window.filter = function filter (data) {
     downloader.id = "downloader";
     downloader.innerText = "Download the HTML";
     downloader.style.cursor = "pointer";
-    downloader.onclick = function() { download('tester', document.body.innerHTML) };
+    downloader.onclick = function() {
+				download('tester', document.body.innerHTML);
+    };
     indentedAppend(document.body, downloader);
     
     var posts = data.response.posts;
@@ -63,12 +66,12 @@ window.filter = function filter (data) {
             alert("UNKNOWN TYPE OF " + posts[i].type);
         }
     });
-}
+};
 
 function stripText(post) {
     var toAdd = document.createElement('div');
     toAdd.className = "post text";
-    if(post.title != null) { toAdd.innerHTML = post.title + "</br>" + post.body; }
+    if(post.title !== null) { toAdd.innerHTML = post.title + "</br>" + post.body; }
     else { toAdd.innerHTML = post.body; }
     var charCount = post.body.replace(/[^A-Z]/gi, "").length;
     if(charCount >= longCharMin) { toAdd.className = "post text big"; }
@@ -116,7 +119,7 @@ function stripVideo(post) {
         else if(vimeo.exec(videoPlayer)) {
             var idReg = /video\/([^]+)" w/,
                 id = idReg.exec(videoPlayer)[1],
-                url = "http://vimeo.com/api/v2/video/" + id + ".json?callback=showThumb";
+                url = "http://vimeo.com/api/v2/video/" + id + ".json?callback=showThumb",
                 scripter = document.createElement('script');
             scripter.src = url;
             indentedAppend(document.body, scripter);
@@ -137,7 +140,7 @@ function stripVideo(post) {
 function stripQuote(post) {
     var toAdd = document.createElement('div');
     toAdd.className = "post quote";
-    if(post.source != null) { toAdd.innerHTML = post.text + "</br><span class='quoteAuthor'>" + post.source + "</span>"; }
+    if(post.source !== null) { toAdd.innerHTML = post.text + "</br><span class='quoteAuthor'>" + post.source + "</span>"; }
     else { toAdd.innerHTML = post.text; }
     var charCount = post.text.replace(/[^A-Z]/gi, "").length;
     if(charCount >= longCharMin) { toAdd.className = "post quote big"; }
@@ -147,9 +150,9 @@ function stripQuote(post) {
 function stripLink(post) {
     var toAdd = document.createElement('div');
     toAdd.className = "post link";
-    if(post.title != null && post.description != null) { toAdd.innerHTML = post.title + "</br>" + post.url + "</br>" + post.description; }
-    else if(post.title != null) { toAdd.innerHTML = post.title + "</br>" + post.url; }
-    else if(post.description != null) { toAdd.innerHTML = post.url + "</br>" + post.description; }
+    if(post.title !== null && post.description !== null) { toAdd.innerHTML = post.title + "</br>" + post.url + "</br>" + post.description; }
+    else if(post.title !== null) { toAdd.innerHTML = post.title + "</br>" + post.url; }
+    else if(post.description !== null) { toAdd.innerHTML = post.url + "</br>" + post.description; }
     else { toAdd.innerHTML = post.url; }
     var charCount = post.description.replace(/[^A-Z]/gi, "").length;
     if(charCount >= longCharMin) { toAdd.className = "post link big"; }
@@ -218,13 +221,7 @@ function showThumb(data){
     var image = document.createElement('div');
     image.innerHTML = data[0].thumbnail_medium;
     image.id = "vimeo" + data[0].id;
-    console.log("vimeo" + data[0].id)
+    console.log("vimeo" + data[0].id);
     image.className = "hidden";
     indentedAppend(document.body, image);
-}
-
-
-
-function showThumb(data){
-    document.querySelector("#vimeo" + data[0].id).src = data[0].thumbnail_medium;
 }
